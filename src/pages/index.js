@@ -1,77 +1,58 @@
-import Head from "next/head";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
-export default function Sessions() {
-  const [sessions, setSessions] = useState([]);
+export default function Login() {
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const { data: session } = useSession();
 
-  useEffect(() => {
-    axios
-      .get("/api/tutorPlus/sessions")
-      .then((response) => {
-        const sessions = response.data;
-        console.log(sessions); // log sessions to console
-        const sessionIds = sessions.map((session) => session.sessionId);
-        axios
-          .get("/api/tutorPlus/studentsessions", {
-            params: { sessionIds },
-          })
-          .then((response) => {
-            const studentSessions = response.data;
-            console.log(studentSessions);
-            const sessionStudentMap = new Map();
-            for (const studentSession of studentSessions) {
-              const sessionId = studentSession.sessionId;
-              const studentId = studentSession.studentId;
-              if (!sessionStudentMap.has(sessionId)) {
-                sessionStudentMap.set(sessionId, [studentId]);
-              } else {
-                sessionStudentMap.get(sessionId).push(studentId);
-              }
-            }
-            for (const session of sessions) {
-              session.studentIds =
-                sessionStudentMap.get(session.sessionId) || [];
-            }
-            setSessions(sessions);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const result = await signIn("credentials", {
+      redirect: false,
+      userId,
+      password,
+    });
+    if (result.error) {
+      console.error(result.error);
+    } else {
+      router.push(`/${result.role}/${result.id}`);
+    }
+  };
 
-  console.log(sessions);
+  if (session) {
+    router.push(`/${session.role}/${session.id}`);
+    return null;
+  }
 
   return (
     <>
-      <Head>
-        <title>Sessions</title>
-      </Head>
-      <h1>Sessions</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Session ID</th>
-            <th>Session Time</th>
-            <th>Tutor ID</th>
-            <th>Student IDs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sessions.map((session) => (
-            <tr key={session._id}>
-              <td>{session.sessionId}</td>
-              <td>{session.sessionTime}</td>
-              <td>{session.tutorId}</td>
-              <td>{session.studentIds.join(", ")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="userId">User ID:</label>
+          <input
+            type="text"
+            id="userId"
+            name="userId"
+            value={userId}
+            onChange={(event) => setUserId(event.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
     </>
   );
 }
