@@ -94,7 +94,7 @@ export default function Admin() {
       );
       for (const ss of studentSessionsToDelete) {
         await axios.delete(
-          `https://tutor-plus.vercel.app/tutorPlus/studentsessions/${ss._id}`
+          `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${ss._id}`
         );
       }
       alert("Session deleted successfully");
@@ -107,7 +107,7 @@ export default function Admin() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/tutorPlus/sessions")
+      .get("https://tutor-plus.vercel.app/api/tutorPlus/sessions")
       .then((response) => {
         setSessions(response.data);
       })
@@ -118,7 +118,7 @@ export default function Admin() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/tutorPlus/studentsessions")
+      .get("https://tutor-plus.vercel.app/api/tutorPlus/studentsessions")
       .then((response) => {
         setStudentSessions(response.data);
       })
