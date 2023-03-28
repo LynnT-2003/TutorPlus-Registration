@@ -113,8 +113,7 @@ export default function Tutor() {
                 <button
                   onClick={() =>
                     router.push({
-                      pathname: "/tutor/update",
-                      query: { sessionId: session.sessionId },
+                      pathname: `/tutor/update/${session._id}`,
                     })
                   }
                 >
