@@ -8,6 +8,23 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 
 export default function Student() {
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const fetchSessions = async () => {
+    try {
+      const response = await axios.get(
+        "https://tutor-plus.vercel.app//api/tutorPlus/sessions"
+      );
+      setSessions(response.data);
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    }
+  };
+
   const [student, setStudent] = useState(null);
   const router = useRouter();
   const { studentId } = router.query; // Get the studentId from router.query
@@ -26,7 +43,7 @@ export default function Student() {
   const fetchStudentDetails = async (id) => {
     try {
       const response = await axios.get(
-        `https://tutor-plus.vercel.app/api/tutorPlus/students/${id}`
+        `https://tutor-plus.vercel.app//api/tutorPlus/students/${id}`
       );
       console.log("response", response.data);
       setStudent(response.data);
@@ -39,6 +56,25 @@ export default function Student() {
   if (!student) {
     return <div>Loading...</div>;
   }
+
+  const handleRegister = async (sessionId) => {
+    console.log("Registering student...");
+    console.log("studentId", student.studentId);
+    console.log("sessionId", sessionId);
+    try {
+      console.log("Sending POST request to API endpoint");
+      const response = await axios.post(
+        "https://tutor-plus.vercel.app//api/tutorPlus/studentsessions",
+        {
+          studentId: student.studentId,
+          sessionId,
+        }
+      );
+      console.log("Successfully registered:", response.data);
+    } catch (error) {
+      console.error("Error registering:", error);
+    }
+  };
 
   return (
     <>
@@ -82,6 +118,33 @@ export default function Student() {
       </div>
       <div classname="functionalities">
         <button>See tutoring sessions</button>
+      </div>
+
+      <br />
+
+      <div classname="sessions">
+        <h4>Offered Sessions</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Session ID</th>
+              <th>Session Time</th>
+              <th>Tutor ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sessions.map((session) => (
+              <tr key={session._id}>
+                <td>{session.sessionId}</td>
+                <td>{new Date(session.sessionTime).toLocaleString()}</td>
+                <td>{session.tutorId}</td>
+                <button onClick={() => handleRegister(session.sessionId)}>
+                  Register +
+                </button>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
