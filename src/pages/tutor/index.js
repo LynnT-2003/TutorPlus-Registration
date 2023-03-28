@@ -126,7 +126,7 @@ export default function Tutor() {
                   onClick={async () => {
                     try {
                       await axios.delete(
-                        `http://localhost:3000/api/tutorPlus/sessions/${session._id}`
+                        `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
                       );
                       alert("Session deleted successfully");
                       window.location.reload(false);
