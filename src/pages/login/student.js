@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 export default function admin() {
@@ -32,7 +31,10 @@ export default function admin() {
     if (student && password === student.studentName) {
       setIsLoggedInStudent(true);
       setCurrentStudentID(username);
-      router.push("/student");
+      router.push({
+        pathname: "/student",
+        query: { studentId: student._id },
+      });
     } else {
       setIsLoggedInStudent(false);
       alert("Incorrect username or password");
