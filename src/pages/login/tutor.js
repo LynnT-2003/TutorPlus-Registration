@@ -32,7 +32,10 @@ export default function admin() {
     if (tutor && password === tutor.tutorName) {
       setIsLoggedinTutor(true);
       setCurrentTutorID(username);
-      router.push("/tutor");
+      router.push({
+        pathname: "/tutor",
+        query: { tutorId: username },
+      });
     } else {
       setIsLoggedinTutor(false);
       alert("Incorrect username or password");
