@@ -131,7 +131,7 @@ export default function Tutor() {
 
                       // Delete all the related documents from the studentsessions API
                       const response = await axios.delete(
-                        `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/session/${session.sessionId}`
+                        `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${session.sessionId}`
                       );
 
                       console.log(response.data);
