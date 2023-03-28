@@ -124,16 +124,25 @@ export default function Tutor() {
                 <button
                   onClick={async () => {
                     try {
-                      // Delete session from sessions API
+                      // Check if session ID exists in studentsessions API
+                      const studentsessionsResponse = await axios.get(
+                        "https://tutor-plus.vercel.app/api/tutorPlus/studentsessions"
+                      );
+                      const studentSessions =
+                        studentsessionsResponse.data.filter(
+                          (studentSession) =>
+                            studentSession.sessionId === session.sessionId
+                        );
+                      if (studentSessions.length > 0) {
+                        // If associated documents exist, delete them
+                        await axios.delete(
+                          `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${session.sessionId}`
+                        );
+                      }
+                      // Delete session in sessions API
                       await axios.delete(
                         `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
                       );
-
-                      // Delete student sessions from studentsessions API
-                      await axios.delete(
-                        `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions?sessionId=${session.sessionId}`
-                      );
-
                       alert("Session deleted successfully");
                       window.location.reload(false);
                     } catch (error) {
