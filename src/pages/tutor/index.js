@@ -125,7 +125,7 @@ export default function Tutor() {
                   try {
                     // Delete the session
                     await axios.delete(
-                      `https://tutor-plus.vercel.app/tutorPlus/sessions/${session._id}`
+                      `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
                     );
 
                     // Delete student sessions for this session
