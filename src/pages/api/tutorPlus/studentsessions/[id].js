@@ -28,8 +28,8 @@ export default async function handler(req, res) {
 }
 
 const studentSessionSchema = new Schema({
-  tutorId: String,
-  tutorName: String,
+  sessionId: String,
+  studentId: String,
 });
 
 console.log("Mongoose Models", models);
