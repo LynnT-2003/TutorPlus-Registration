@@ -120,24 +120,37 @@ export default function Tutor() {
                   Edit
                 </button>
               </td>
-              <td>
-                <button
-                  onClick={async () => {
-                    try {
+              <button
+                onClick={async () => {
+                  try {
+                    // Delete the session
+                    await axios.delete(
+                      `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
+                    );
+
+                    // Delete student sessions for this session
+                    const studentSessions = await axios.get(
+                      "https://tutor-plus.vercel.app/api/tutorPlus/studentsessions"
+                    );
+                    const studentSessionsToDelete = studentSessions.data.filter(
+                      (ss) => ss.sessionId === session.sessionId
+                    );
+                    for (const ss of studentSessionsToDelete) {
                       await axios.delete(
-                        `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
+                        `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${ss._id}`
                       );
-                      alert("Session deleted successfully");
-                      window.location.reload(false);
-                    } catch (error) {
-                      console.log(error);
-                      alert("Error deleting session");
                     }
-                  }}
-                >
-                  Delete
-                </button>
-              </td>
+
+                    alert("Session deleted successfully");
+                    window.location.reload(false);
+                  } catch (error) {
+                    console.log(error);
+                    alert("Error deleting session");
+                  }
+                }}
+              >
+                Delete
+              </button>
             </tr>
           ))}
         </tbody>
