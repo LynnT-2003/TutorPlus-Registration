@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Container, Form, Button } from "react-bootstrap";
-import Link from "next/link";
 
 const API_URL = "https://tutor-plus.vercel.app/api/tutorPlus/tutors";
 
