@@ -50,7 +50,7 @@ export default function UpdateSession() {
 
   const onSubmit = async (data) => {
     await updateSessionTimeById(id, data.newSessionTime);
-    router.push("/"); // Redirect to the desired page after updating
+    router.back();
   };
 
   if (!session) {
@@ -89,6 +89,10 @@ export default function UpdateSession() {
           Update Time
         </Button>
       </Form>
+      <br />
+      <Button variant="outline-secondary" onClick={() => router.back()}>
+        Back
+      </Button>
     </Container>
   );
 }
