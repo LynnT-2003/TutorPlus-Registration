@@ -124,14 +124,24 @@ export default function Tutor() {
                 <button
                   onClick={async () => {
                     try {
+                      // Delete the session from the sessions API
                       await axios.delete(
                         `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
                       );
-                      alert("Session deleted successfully");
+
+                      // Delete all the related documents from the studentsessions API
+                      const response = await axios.delete(
+                        `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/session/${session.sessionId}`
+                      );
+
+                      console.log(response.data);
+                      alert(
+                        "Session and related documents deleted successfully"
+                      );
                       window.location.reload(false);
                     } catch (error) {
                       console.log(error);
-                      alert("Error deleting session");
+                      alert("Error deleting session and related documents");
                     }
                   }}
                 >
