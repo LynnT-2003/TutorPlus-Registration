@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Image from "next/legacy/image";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import React from "react";
+import Table from "react-bootstrap/Table";
 
 export default function Admin() {
   const router = useRouter();
@@ -181,39 +181,70 @@ export default function Admin() {
     return enrolledStudents.length;
   };
 
+  const goHome = () => {
+    router.push("/");
+  };
+
+  const goAdmin = () => {
+    router.push("/login/admin");
+  };
+
+  const goTutor = () => {
+    router.push("/login/tutor");
+  };
+
+  const goStudent = () => {
+    router.push("/login/student");
+  };
+
+  const cardStyle = {
+    width: "50vw",
+    backgroundColor: "white",
+    color: "black",
+    borderRadius: "10px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+    margin: "5vw auto",
+    textAlign: "center",
+    padding: "3vw",
+  };
+
+  const cardText = {
+    fontSize: "2.5rem",
+    fontWeight: "300",
+    lineHeight: "1.2",
+    color: "#333",
+    textAlign: "center",
+    marginTop: "3rem",
+  };
+
+  const cardSmallText = {
+    fontSize: "1.5rem",
+    fontWeight: "300",
+    lineHeight: "1.2",
+    color: "#333",
+    marginBottom: "2rem",
+    textAlign: "center",
+  };
+
   return (
     <>
       <Navbar bg="light" variant="light">
         <Container>
-          <Navbar.Brand href="#home">TutorPlus</Navbar.Brand>
+          <Navbar.Brand onClick={goHome}>TutorPlus</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/login/admin">Admin</Nav.Link>
-            <Nav.Link href="/login/tutor">Tutor</Nav.Link>
-            <Nav.Link href="/login/student">Student</Nav.Link>
+            <Nav.Link onClick={goAdmin}>Admin</Nav.Link>
+            <Nav.Link onClick={goTutor}>Tutor</Nav.Link>
+            <Nav.Link onClick={goStudent}>Student</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
 
-      <div
-        style={{
-          zIndex: -1,
-          position: "fixed",
-          width: "100vw",
-          height: "100vh",
-        }}
-      >
-        <Image
-          src="/images/background.jpg"
-          alt="Background"
-          layout="fill"
-          objectFit="cover"
-        />
-      </div>
-      <div>
-        <h1>Welcome Admin {adminId}</h1>
-        {adminName && <p>Admin Name: {adminName}</p>}
-        <h1>Tutors</h1>
-        <table>
+      <Container style={cardText}>Admin Dashboard</Container>
+      <Container style={cardText}>Welcome {adminName}</Container>
+
+      <div style={cardStyle}>
+        <Container style={cardSmallText}>Tutors</Container>
+        <Table>
           <thead>
             <tr>
               <th>Tutor ID</th>
@@ -230,6 +261,7 @@ export default function Admin() {
                 <td>
                   {" "}
                   <Button
+                    variant="outline-secondary"
                     onClick={() =>
                       router.push({
                         pathname: `/admin/update/${tutor._id}`,
@@ -240,19 +272,24 @@ export default function Admin() {
                   </Button>
                 </td>
                 <td>
-                  <Button onClick={() => handleDelete(tutor._id)}>
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleDelete(tutor._id)}
+                  >
                     Delete
                   </Button>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
         <Link href="/admin/add">
-          <Button>Add New Tutor</Button>
+          <Button style={{ margin: "2em" }} variant="outline-secondary">
+            Add New Tutor
+          </Button>
         </Link>{" "}
-        <h1>Students</h1>
-        <table>
+        <Container style={cardSmallText}>Students</Container>
+        <Table>
           <thead>
             <tr>
               <th>Student ID</th>
@@ -269,6 +306,7 @@ export default function Admin() {
                 <td>
                   {" "}
                   <Button
+                    variant="outline-secondary"
                     onClick={() =>
                       router.push({
                         pathname: `/admin/updateStudent/${student._id}`,
@@ -279,21 +317,24 @@ export default function Admin() {
                   </Button>
                 </td>
                 <td>
-                  <Button onClick={() => handleDeleteStudent(student._id)}>
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleDeleteStudent(student._id)}
+                  >
                     Delete
                   </Button>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
         <Link href="/admin/addStudent">
-          <Button>Add New Student</Button>
+          <Button style={{ margin: "2em" }} variant="outline-secondary">
+            Add New Student
+          </Button>
         </Link>{" "}
-      </div>
-      <div>
-        <h1>Sessions by Tutors</h1>
-        <table>
+        <Container style={cardSmallText}>Sessions by Tutors</Container>
+        <Table>
           <thead>
             <tr>
               <th>Tutor ID</th>
@@ -329,7 +370,7 @@ export default function Admin() {
               );
             })}
           </tbody>
-        </table>
+        </Table>
       </div>
     </>
   );

@@ -6,6 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import Table from "react-bootstrap/Table";
+import { Button } from "react-bootstrap";
 
 export default function Student() {
   const [sessions, setSessions] = useState([]);
@@ -17,7 +19,7 @@ export default function Student() {
   const fetchSessions = async () => {
     try {
       const response = await axios.get(
-        "https://tutor-plus.vercel.app//api/tutorPlus/sessions"
+        "https://tutor-plus.vercel.app/api/tutorPlus/sessions"
       );
       setSessions(response.data);
     } catch (error) {
@@ -28,6 +30,22 @@ export default function Student() {
   const [student, setStudent] = useState(null);
   const router = useRouter();
   const { studentId } = router.query; // Get the studentId from router.query
+
+  const goHome = () => {
+    router.push("/");
+  };
+
+  const goAdmin = () => {
+    router.push("/login/admin");
+  };
+
+  const goTutor = () => {
+    router.push("/login/tutor");
+  };
+
+  const goStudent = () => {
+    router.push("/login/student");
+  };
 
   useEffect(() => {
     if (studentId) {
@@ -43,7 +61,7 @@ export default function Student() {
   const fetchStudentDetails = async (id) => {
     try {
       const response = await axios.get(
-        `https://tutor-plus.vercel.app//api/tutorPlus/students/${id}`
+        `https://tutor-plus.vercel.app/api/tutorPlus/students/${id}`
       );
       console.log("response", response.data);
       setStudent(response.data);
@@ -56,6 +74,25 @@ export default function Student() {
     return <div>Loading...</div>;
   }
 
+  const cardStyle = {
+    width: "60vw",
+    backgroundColor: "white",
+    color: "black",
+    borderRadius: "10px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+    margin: "5vw auto",
+    textAlign: "center",
+    padding: "3vw",
+  };
+
+  const cardText = {
+    fontSize: "2.5rem",
+    fontWeight: "300",
+    lineHeight: "1.2",
+    color: "#333",
+    marginBottom: "2rem",
+  };
+
   const handleRegister = async (sessionId) => {
     console.log("Registering student...");
     console.log("studentId", student.studentId);
@@ -63,7 +100,7 @@ export default function Student() {
     try {
       console.log("Sending POST request to API endpoint");
       const response = await axios.post(
-        "https://tutor-plus.vercel.app//api/tutorPlus/studentsessions",
+        "https://tutor-plus.vercel.app/api/tutorPlus/studentsessions",
         {
           studentId: student.studentId,
           sessionId,
@@ -80,71 +117,49 @@ export default function Student() {
     <>
       <Navbar bg="light" variant="light">
         <Container>
-          <Navbar.Brand href="#home">TutorPlus</Navbar.Brand>
+          <Navbar.Brand onClick={goHome}>TutorPlus</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/login/admin">Admin</Nav.Link>
-            <Nav.Link href="/login/tutor">Tutor</Nav.Link>
-            <Nav.Link href="/login/student">Student</Nav.Link>
+            <Nav.Link onClick={goAdmin}>Admin</Nav.Link>
+            <Nav.Link onClick={goTutor}>Tutor</Nav.Link>
+            <Nav.Link onClick={goStudent}>Student</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
 
-      <div
-        style={{
-          zIndex: -1,
-          position: "fixed",
-          width: "100vw",
-          height: "100vh",
-        }}
-      >
-        <Image
-          src="/images/background.jpg"
-          alt="Background"
-          layout="fill"
-          objectFit="cover"
-          priority={true}
-        />
-      </div>
+      <div style={cardStyle}>
+        <Container style={cardText}>Welcome {student.studentName}</Container>
 
-      <div className="title">
-        <h1>Student Page</h1>
-      </div>
-      <br />
-      <div classname="student-details">
-        <h2>Student Details</h2>
-        <p>ID: {student.studentId}</p>
-        <p>Name: {student.studentName}</p>
-        {/* Add any other student details you want to display */}
-      </div>
-      <div classname="functionalities">
-        <button>See tutoring sessions</button>
-      </div>
-
-      <br />
-
-      <div classname="sessions">
-        <h4>Offered Sessions</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Session ID</th>
-              <th>Session Time</th>
-              <th>Tutor ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sessions.map((session) => (
-              <tr key={session._id}>
-                <td>{session.sessionId}</td>
-                <td>{new Date(session.sessionTime).toLocaleString()}</td>
-                <td>{session.tutorId}</td>
-                <button onClick={() => handleRegister(session.sessionId)}>
-                  Register +
-                </button>
+        <div>
+          <h6>Offered Sessions</h6>
+          <Table style={{ marginTop: "4em", marginBottom: "6em" }}>
+            <thead>
+              <tr>
+                <th>Session ID</th>
+                <th>Session Time</th>
+                <th>Tutor ID</th>
+                <th>&nbsp;</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sessions.map((session) => (
+                <tr key={session._id}>
+                  <td>{session.sessionId}</td>
+                  <td>{new Date(session.sessionTime).toLocaleString()}</td>
+                  <td>{session.tutorId}</td>
+                  <td>
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={() => handleRegister(session.sessionId)}
+                    >
+                      Register +
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </div>
     </>
   );

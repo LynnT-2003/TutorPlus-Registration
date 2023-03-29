@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { Form, Button } from "react-bootstrap";
 
 export default function admin() {
   const [tutorDB, setTutorDB] = useState([]);
@@ -49,61 +50,97 @@ export default function admin() {
     }
   };
 
+  const goHome = () => {
+    router.push("/");
+  };
+
+  const goAdmin = () => {
+    router.push("/login/admin");
+  };
+
+  const goTutor = () => {
+    router.push("/login/tutor");
+  };
+
+  const goStudent = () => {
+    router.push("/login/student");
+  };
+
+  const cardStyle = {
+    width: "20vw",
+    backgroundColor: "white",
+    color: "black",
+    borderRadius: "10px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+    margin: "5vw auto",
+    textAlign: "center",
+    padding: "3vw",
+  };
+
+  const cardText = {
+    fontSize: "2.5rem",
+    fontWeight: "300",
+    lineHeight: "1.2",
+    color: "#333",
+    marginBottom: "1rem",
+  };
+
   return (
     <>
       <Navbar bg="light" variant="light">
         <Container>
-          <Navbar.Brand href="#home">TutorPlus</Navbar.Brand>
+          <Navbar.Brand onClick={goHome}>TutorPlus</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/login/admin">Admin</Nav.Link>
-            <Nav.Link href="/login/tutor">Tutor</Nav.Link>
-            <Nav.Link href="/login/student">Student</Nav.Link>
+            <Nav.Link onClick={goAdmin}>Admin</Nav.Link>
+            <Nav.Link onClick={goTutor}>Tutor</Nav.Link>
+            <Nav.Link onClick={goStudent}>Student</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
 
-      <div
-        style={{
-          zIndex: -1,
-          position: "fixed",
-          width: "100vw",
-          height: "100vh",
-        }}
-      >
-        <Image
-          src="/images/background.jpg"
-          alt="Background"
-          layout="fill"
-          objectFit="cover"
-          priority={true}
-        />
-      </div>
-
-      <div className="admin-login">
-        <h1>Login</h1>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="username">User ID:</label>
-            <input
+      <div style={cardStyle}>
+        <Container style={cardText}>Tutor Login</Container>
+        <br />
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="username">
+            <Form.Label>Tutor ID</Form.Label>
+            <Form.Control
               type="text"
-              id="username"
-              name="username"
               value={username}
+              placeholder="t01"
               onChange={(event) => setUsername(event.target.value)}
             />
-          </div>
-          <div>
-            <label htmlFor="password">Password:</label>
-            <input
+
+            <br />
+          </Form.Group>
+          <Form.Group controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
               type="password"
-              id="password"
-              name="password"
               value={password}
+              placeholder="password"
               onChange={(event) => setPassword(event.target.value)}
             />
-          </div>
-          <button type="submit">Login</button>
-        </form>
+          </Form.Group>
+
+          <br />
+          <br />
+
+          <Button
+            variant="outline-primary"
+            type="submit"
+            style={{ marginBottom: "1em", width: "13vw" }}
+          >
+            Login
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={goHome}
+            style={{ marginBottom: "2em", width: "13vw" }}
+          >
+            Back
+          </Button>
+        </Form>
       </div>
     </>
   );

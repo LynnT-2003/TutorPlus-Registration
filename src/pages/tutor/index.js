@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/legacy/image";
-import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { Form, Button } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 
 export default function Tutor() {
   const router = useRouter();
@@ -22,7 +24,6 @@ export default function Tutor() {
       .then((response) => {
         setTutorDB(response.data);
         console.log(tutorDB);
-        // alert("Successfully fetched tutors data");
       })
       .catch((error) => {
         console.log(error);
@@ -44,7 +45,6 @@ export default function Tutor() {
       .get("https://tutor-plus.vercel.app/api/tutorPlus/sessions")
       .then((response) => {
         setSessions(response.data);
-        // alert("Successfully fetched sessions data");
       })
       .catch((error) => {
         console.log(error);
@@ -63,111 +63,181 @@ export default function Tutor() {
           return acc;
         }, {});
 
+        // Create an object with all session IDs and a value of 0
+        const sessionIds = sessions.map((session) => session.sessionId);
+        const numStudents = Object.fromEntries(
+          sessionIds.map((sessionId) => [sessionId, 0])
+        );
+
         // Calculate the number of students enrolled in each session
-        const numStudents = {};
         for (const [sessionId, studentSessions] of Object.entries(
           sessionsData
         )) {
           numStudents[sessionId] = studentSessions.length;
         }
-        setNumStudentsEnrolled(numStudents);
 
-        // alert("Successfully fetched student sessions data");
+        setNumStudentsEnrolled(numStudents);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
+  console.table(numStudentsEnrolled);
+
   const filteredSessions = sessions.filter(
     (session) => session.tutorId === tutorId
   );
 
+  console.table(filteredSessions);
+
+  const cardStyle = {
+    width: "50vw",
+    backgroundColor: "white",
+    color: "black",
+    borderRadius: "10px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+    margin: "5vw auto",
+    textAlign: "center",
+    padding: "3vw",
+  };
+
+  const cardText = {
+    fontSize: "2.5rem",
+    fontWeight: "300",
+    lineHeight: "1.2",
+    color: "#333",
+    marginBottom: "2rem",
+  };
+
+  const goHome = () => {
+    router.push("/");
+  };
+
+  const goAdmin = () => {
+    router.push("/login/admin");
+  };
+
+  const goTutor = () => {
+    router.push("/login/tutor");
+  };
+
+  const goStudent = () => {
+    router.push("/login/student");
+  };
+
   return (
     <div>
-      <h1>Welcome Tutor {tutorId}</h1>
-      {tutorName && <p>Tutor Name: {tutorName}</p>}
-      <table>
-        <thead>
-          <tr>
-            <th>Session ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Number of Students Enrolled</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredSessions.map((session) => (
-            <tr key={session.sessionId}>
-              <td>{session.sessionId}</td>
-              <td>{new Date(session.sessionTime).toLocaleDateString()}</td>
-              <td>{new Date(session.sessionTime).toLocaleTimeString()}</td>
-              {/* <td>
-                {new Date(session.sessionTime).toLocaleDateString("en-US", {
-                  timeZone: "UTC",
-                })}
-              </td>
-              <td>
-                {new Date(session.sessionTime).toLocaleTimeString("en-US", {
-                  timeZone: "UTC",
-                })}
-              </td> */}
-              <td>{numStudentsEnrolled[session.sessionId]}</td>
-              <td>
-                <button
-                  onClick={() =>
-                    router.push({
-                      pathname: `/tutor/update/${session._id}`,
-                    })
-                  }
-                >
-                  Edit
-                </button>
-              </td>
-              <button
-                onClick={async () => {
-                  try {
-                    // Delete the session
-                    await axios.delete(
-                      `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
-                    );
+      <Navbar bg="light" variant="light">
+        <Container>
+          <Navbar.Brand onClick={goHome}>TutorPlus</Navbar.Brand>
+          <Nav className="me-auto">
+            <Nav.Link onClick={goAdmin}>Admin</Nav.Link>
+            <Nav.Link onClick={goTutor}>Tutor</Nav.Link>
+            <Nav.Link onClick={goStudent}>Student</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
 
-                    // Delete student sessions for this session
-                    const studentSessions = await axios.get(
-                      "https://tutor-plus.vercel.app/api/tutorPlus/studentsessions"
-                    );
-                    const studentSessionsToDelete = studentSessions.data.filter(
-                      (ss) => ss.sessionId === session.sessionId
-                    );
-                    for (const ss of studentSessionsToDelete) {
-                      await axios.delete(
-                        `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${ss._id}`
-                      );
-                    }
+      <div style={cardStyle}>
+        <Container style={cardText}>Welcome {tutorName}</Container>
 
-                    alert("Session deleted successfully");
-                    window.location.reload(false);
-                  } catch (error) {
-                    console.log(error);
-                    alert("Error deleting session");
-                  }
-                }}
-              >
-                Delete
-              </button>
+        <Table
+          responsive
+          style={{
+            width: "100%",
+            margin: "auto",
+            marginBottom: "5em",
+            marginTop: "3em",
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Session ID</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Students Enrolled</th>
+              <th>&nbsp;</th>
+              <th>&nbsp;</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <button
-        onClick={() =>
-          router.push({ pathname: "/tutor/add", query: { tutorId } })
-        }
-      >
-        Add New Session
-      </button>
+          </thead>
+          <tbody>
+            {filteredSessions.map((session) => (
+              <tr key={session.sessionId}>
+                <td>{session.sessionId}</td>
+                <td>{new Date(session.sessionTime).toLocaleDateString()}</td>
+                <td>{new Date(session.sessionTime).toLocaleTimeString()}</td>
+                {/* <td>
+                  {new Date(session.sessionTime).toLocaleDateString("en-US", {
+                    timeZone: "UTC",
+                  })}
+                </td>
+                <td>
+                  {new Date(session.sessionTime).toLocaleTimeString("en-US", {
+                    timeZone: "UTC",
+                  })}
+                </td> */}
+                <td>{numStudentsEnrolled[session.sessionId] || 0}</td>
+                <td>
+                  <Button
+                    variant="outline-primary"
+                    style={{ width: "5em" }}
+                    onClick={() =>
+                      router.push({
+                        pathname: `/tutor/update/${session._id}`,
+                      })
+                    }
+                  >
+                    Edit
+                  </Button>
+                </td>
+                <td>
+                  <Button
+                    variant="outline-danger"
+                    style={{ width: "5em" }}
+                    onClick={async () => {
+                      try {
+                        // Delete the session
+                        await axios.delete(
+                          `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
+                        );
+                        // Delete student sessions for this session
+                        const studentSessions = await axios.get(
+                          "https://tutor-plus.vercel.app/api/tutorPlus/studentsessions"
+                        );
+                        const studentSessionsToDelete =
+                          studentSessions.data.filter(
+                            (ss) => ss.sessionId === session.sessionId
+                          );
+                        for (const ss of studentSessionsToDelete) {
+                          await axios.delete(
+                            `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${ss._id}`
+                          );
+                        }
+                        alert("Session deleted successfully");
+                        window.location.reload(false);
+                      } catch (error) {
+                        console.log(error);
+                        alert("Error deleting session");
+                      }
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <Button
+          style={{ width: "20em", height: "3em" }}
+          onClick={() =>
+            router.push({ pathname: "/tutor/add", query: { tutorId } })
+          }
+        >
+          Add New Session
+        </Button>
+      </div>
     </div>
   );
 }
