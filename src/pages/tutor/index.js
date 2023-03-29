@@ -165,9 +165,9 @@ export default function Tutor() {
             {filteredSessions.map((session) => (
               <tr key={session.sessionId}>
                 <td>{session.sessionId}</td>
-                <td>{new Date(session.sessionTime).toLocaleDateString()}</td>
-                <td>{new Date(session.sessionTime).toLocaleTimeString()}</td>
-                {/* <td>
+                {/* <td>{new Date(session.sessionTime).toLocaleDateString()}</td>
+                <td>{new Date(session.sessionTime).toLocaleTimeString()}</td> */}
+                <td>
                   {new Date(session.sessionTime).toLocaleDateString("en-US", {
                     timeZone: "UTC",
                   })}
@@ -176,7 +176,7 @@ export default function Tutor() {
                   {new Date(session.sessionTime).toLocaleTimeString("en-US", {
                     timeZone: "UTC",
                   })}
-                </td> */}
+                </td>
                 <td>{numStudentsEnrolled[session.sessionId] || 0}</td>
                 <td>
                   <Button
