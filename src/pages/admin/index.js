@@ -52,13 +52,60 @@ export default function Admin() {
       });
   }, []);
 
-  const handleDelete = async (tutorId) => {
+  const handleDelete = async (id) => {
     try {
+      // Get the tutor to be deleted
+      const tutor = tutors.find((tutor) => tutor._id === id);
+      console.table(tutor);
+
+      // Get the sessions and student sessions for the tutor
+      // Fetch all sessions
+      const responseAllSessions = await axios.get(
+        "https://tutor-plus.vercel.app/api/tutorPlus/sessions"
+      );
+      const allSessions = responseAllSessions.data;
+
+      // Filter sessions that have the same tutorId
+      const sessions = allSessions.filter(
+        (session) => session.tutorId === tutor.tutorId
+      );
+      console.table(sessions);
+
+      // Fetch all student sessions
+      const responseAllStudentSessions = await axios.get(
+        "https://tutor-plus.vercel.app/api/tutorPlus/studentsessions"
+      );
+      const allStudentSessions = responseAllStudentSessions.data;
+
+      // Get the sessionIds of the filtered sessions
+      const sessionIds = sessions.map((session) => session.sessionId);
+
+      // Filter student sessions that have the same sessionId
+      const studentSessions = allStudentSessions.filter((studentSession) =>
+        sessionIds.includes(studentSession.sessionId)
+      );
+      console.table(studentSessions);
+
+      // Delete the student sessions
+      for (const studentSession of studentSessions) {
+        await axios.delete(
+          `https://tutor-plus.vercel.app/api/tutorPlus/studentsessions/${studentSession._id}`
+        );
+      }
+
+      // Delete the sessions
+      for (const session of sessions) {
+        await axios.delete(
+          `https://tutor-plus.vercel.app/api/tutorPlus/sessions/${session._id}`
+        );
+      }
+
+      // Delete the tutor
       await axios.delete(
-        `hhttps://tutor-plus.vercel.app/api/tutorPlus/tutors/${tutorId}`
+        `https://tutor-plus.vercel.app/api/tutorPlus/tutors/${id}`
       );
       alert("Tutor deleted successfully");
-      setTutors(tutors.filter((tutor) => tutor._id !== tutorId));
+      setTutors(tutors.filter((tutor) => tutor._id !== id));
     } catch (error) {
       console.log(error);
       alert("Error deleting tutor");

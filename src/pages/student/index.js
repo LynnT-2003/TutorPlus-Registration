@@ -49,7 +49,6 @@ export default function Student() {
       setStudent(response.data);
     } catch (error) {
       console.log(error);
-      console.log("wtf is null");
     }
   };
 
@@ -71,6 +70,7 @@ export default function Student() {
         }
       );
       console.log("Successfully registered:", response.data);
+      alert("Successfully Enrolled");
     } catch (error) {
       console.error("Error registering:", error);
     }
