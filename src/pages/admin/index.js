@@ -358,10 +358,20 @@ export default function Admin() {
                       <td>{tutor.tutorName}</td>
                       <td>{session.sessionId}</td>
                       <td>
-                        {new Date(session.sessionTime).toLocaleDateString()}
+                        {new Date(session.sessionTime).toLocaleDateString(
+                          "en-US",
+                          {
+                            timeZone: "UTC",
+                          }
+                        )}
                       </td>
                       <td>
-                        {new Date(session.sessionTime).toLocaleTimeString()}
+                        {new Date(session.sessionTime).toLocaleTimeString(
+                          "en-US",
+                          {
+                            timeZone: "UTC",
+                          }
+                        )}
                       </td>
                       <td>{getNumOfStudents(session.sessionId)}</td>
                     </tr>
