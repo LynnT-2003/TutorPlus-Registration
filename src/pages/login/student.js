@@ -8,6 +8,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Form, Button } from "react-bootstrap";
+const apiURL = process.env.API_URL;
 
 export default function admin() {
   const [studentDB, setStudentDB] = useState([]);
@@ -40,7 +41,7 @@ export default function admin() {
 
   useEffect(() => {
     axios
-      .get("https://tutor-plus.vercel.app/api/tutorPlus/students")
+      .get(`${apiURL}/students`)
       .then((response) => {
         setStudentDB(response.data);
         console.log(studentDB);
@@ -81,6 +82,7 @@ export default function admin() {
       setIsLoggedInStudent(false);
       alert("Incorrect username or password");
       alert({ studentDB });
+      console.log("Incorrect username or password");
       console.table(studentDB);
     }
   };
