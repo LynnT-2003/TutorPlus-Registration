@@ -8,18 +8,14 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Form, Button } from "react-bootstrap";
-const apiURL = process.env.API_URL;
 
 export default function admin() {
   const [studentDB, setStudentDB] = useState([]);
   const [currentStudentID, setCurrentStudentID] = useState([]);
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedInStudent, setIsLoggedInStudent] = useState("");
-
   const router = useRouter();
-
   const cardStyle = {
     width: "20vw",
     backgroundColor: "white",
@@ -30,7 +26,6 @@ export default function admin() {
     textAlign: "center",
     padding: "3vw",
   };
-
   const cardText = {
     fontSize: "2.5rem",
     fontWeight: "300",
@@ -41,7 +36,7 @@ export default function admin() {
 
   useEffect(() => {
     axios
-      .get(`${apiURL}/students`)
+      .get("https://tutor-plus.vercel.app/api/tutorPlus/students")
       .then((response) => {
         setStudentDB(response.data);
         console.log(studentDB);
@@ -51,23 +46,18 @@ export default function admin() {
         console.log(error);
       });
   }, []);
-
   const goHome = () => {
     router.push("/");
   };
-
   const goAdmin = () => {
     router.push("/login/admin");
   };
-
   const goTutor = () => {
     router.push("/login/tutor");
   };
-
   const goStudent = () => {
     router.push("/login/student");
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const student = studentDB.find((a) => a.studentId === username);
@@ -82,11 +72,9 @@ export default function admin() {
       setIsLoggedInStudent(false);
       alert("Incorrect username or password");
       alert({ studentDB });
-      console.log("Incorrect username or password");
       console.table(studentDB);
     }
   };
-
   return (
     <>
       <Navbar bg="light" variant="light">
@@ -99,7 +87,6 @@ export default function admin() {
           </Nav>
         </Container>
       </Navbar>
-
       <div style={cardStyle}>
         <Container style={cardText}>Student Login</Container>
         <br />
@@ -112,7 +99,6 @@ export default function admin() {
               placeholder="s01"
               onChange={(event) => setUsername(event.target.value)}
             />
-
             <br />
           </Form.Group>
           <Form.Group controlId="password">
@@ -124,10 +110,8 @@ export default function admin() {
               onChange={(event) => setPassword(event.target.value)}
             />
           </Form.Group>
-
           <br />
           <br />
-
           <Button
             variant="outline-primary"
             type="submit"
